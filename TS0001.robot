@@ -76,33 +76,33 @@ TS0001
     Wait Until Location Contains    practicetestautomation.com    ${TIMEOUT}
     Wait Until Element Is Visible    ${ELEMENT_1}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_1}     ${TIMEOUT}
-    Click Element    ${ELEMENT_1} 
-    Go To    ${PRACTICE_URL} 
+    Click Element    ${ELEMENT_1}
+    Go To    ${PRACTICE_URL}
     Wait Until Location Contains    /practice/    ${TIMEOUT}
     Wait Until Element Is Visible    ${ELEMENT_2}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_2}     ${TIMEOUT}
-    Click Element    ${ELEMENT_2} 
-    Go To    ${COURSES_URL} 
+    Click Element    ${ELEMENT_2}
+    Go To    ${COURSES_URL}
     Wait Until Location Contains    /courses/    ${TIMEOUT}
     Wait Until Element Is Visible    ${ELEMENT_3}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_3}     ${TIMEOUT}
-    Click Element    ${ELEMENT_3} 
-    Go To    ${BLOG_URL} 
+    Click Element    ${ELEMENT_3}
+    Go To    ${BLOG_URL}
     Wait Until Location Contains    /blog/    ${TIMEOUT}
     Wait Until Element Is Visible    ${ELEMENT_4}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_4}     ${TIMEOUT}
-    Click Element    ${ELEMENT_4} 
-    Go To    ${CONTACT_URL} 
+    Click Element    ${ELEMENT_4}
+    Go To    ${CONTACT_URL}
     Wait Until Location Contains    /contact/    ${TIMEOUT}
     Wait Until Element Is Visible    ${ELEMENT_5}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_5}     ${TIMEOUT}
-    Input Text    ${ELEMENT_5}     ${VALUE_161_VALUE} 
+    Input Text    ${ELEMENT_5}     ${VALUE_161_VALUE}
     Wait Until Element Is Visible    ${ELEMENT_6}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_6}     ${TIMEOUT}
     Input Text    ${ELEMENT_6}     L
     Wait Until Element Is Visible    ${ELEMENT_7}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_7}     ${TIMEOUT}
-    Input Text    ${ELEMENT_7}     ${VALUE_161_VALUE} 
+    Input Text    ${ELEMENT_7}     ${VALUE_161_VALUE}
     Wait Until Element Is Visible    ${ELEMENT_8}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_8}     ${TIMEOUT}
-    Input Text    ${ELEMENT_8}     ${EMAIL} 
+    Input Text    ${ELEMENT_8}     ${EMAIL}
