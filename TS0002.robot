@@ -69,13 +69,13 @@ TS0002
     Wait Until Location Contains    practicetestautomation.com    ${TIMEOUT}
     Wait Until Element Is Visible    ${ELEMENT_1}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_1}     ${TIMEOUT}
-    Click Element    ${ELEMENT_1} 
-    Go To    ${BLOG_URL} 
+    Click Element    ${ELEMENT_1}
+    Go To    ${BLOG_URL}
     Wait Until Location Contains    /blog/    ${TIMEOUT}
     Wait Until Element Is Visible    ${ELEMENT_2}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_2}     ${TIMEOUT}
-    Click Element    ${ELEMENT_2} 
-    Go To    ${CONTACT_URL} 
+    Click Element    ${ELEMENT_2}
+    Go To    ${CONTACT_URL}
     Wait Until Location Contains    /contact/    ${TIMEOUT}
     Wait Until Element Is Visible    ${ELEMENT_3}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_3}     ${TIMEOUT}
