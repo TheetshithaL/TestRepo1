@@ -1,135 +1,240 @@
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import java.time.Duration;
-import org.testng.annotations.*;
-import org.testng.Assert;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.Paths;
-import java.util.UUID;
+import os
+import time
+import shutil
+import tempfile
+import uuid
+from playwright.sync_api import sync_playwright
 
-public class TS0002 {
-    public static WebDriver driver;
-    public static WebDriverWait wait;
-    private static final int WAIT_TIMEOUT_SECONDS = 15;
-
-    @BeforeSuite
-    public void suiteSetUp() {
-        try {
-            // Default ChromeDriver setup (backward compatible)
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--headless");
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--disable-gpu");
-            options.addArguments("--disable-software-rasterizer");
-            options.addArguments("--no-first-run");
-            options.addArguments("--disable-extensions");
-            options.addArguments("--disable-web-security");
-            options.addArguments("--allow-running-insecure-content");
-            options.addArguments("--remote-debugging-port=0");
-            options.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");
-
-            String uniqueProfile = "/tmp/chrome_" + java.util.UUID.randomUUID().toString().replace("-", "");
-            options.addArguments("--user-data-dir=" + uniqueProfile);
-
-            driver = new ChromeDriver(options);
-            driver.manage().window().maximize();
-            wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        } catch (Exception e) {
-            System.err.println("Suite setup failed: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
+def suite_setup():
+    context = {
+        'playwright': None,
+        'browser': None,
+        'shared_context': None,
+        'page': None
     }
+    try:
+        p = sync_playwright().start()
+        context['playwright'] = p
+        HEADLESS = os.environ.get('HEADLESS', '1').strip() not in ('0', 'false', 'False')
+        chromium_args = [
+            "--no-sandbox",
+            "--disable-dev-shm-usage",
+            "--disable-software-rasterizer",
+            "--no-first-run",
+            "--disable-extensions",
+            "--allow-running-insecure-content",
+            "--remote-debugging-port=0",
+            "--disable-blink-features=AutomationControlled",
+            "--exclude-switches=enable-automation",
+            "--disable-infobars"
+        ]
+        browser = p.chromium.launch(headless=HEADLESS, args=chromium_args)
+        context['browser'] = browser if 'browser' in locals() else None
+        if context['browser'] is None:
+            raise RuntimeError('Playwright browser was not initialized in suite hook.')
+        return context
+    except Exception as setup_error:
+        print(f"Suite setup failed: {setup_error}")
+        if 'browser' in locals() and browser:
+            try:
+                browser.close()
+            except Exception:
+                pass
+        if 'p' in locals() and p:
+            try:
+                p.stop()
+            except Exception:
+                pass
+        raise
 
-    @Test(timeOut = 120000)
-    public void tS0002() {
-        try {
-            if (wait == null && driver != null) {
-                wait = new WebDriverWait(driver, Duration.ofSeconds(WAIT_TIMEOUT_SECONDS));
+def suite_teardown(context):
+    browser = context.get('browser')
+    playwright_instance = context.get('playwright')
+    try:
+        if browser:
+            browser.close()
+    except Exception as suite_after_error:
+        print(f"Suite after hook failed: {suite_after_error}")
+    finally:
+        page = context.get('page')
+        if page:
+            try:
+                page.close()
+            except Exception:
+                pass
+        shared_context = context.get('shared_context')
+        if shared_context:
+            try:
+                shared_context.close()
+            except Exception:
+                pass
+        if browser:
+            try:
+                browser.close()
+            except Exception:
+                pass
+        if playwright_instance:
+            try:
+                playwright_instance.stop()
+            except Exception:
+                pass
+        context['browser'] = None
+        context['playwright'] = None
+        context['page'] = None
+        context['shared_context'] = None
+
+def module_setup(context):
+    browser = context.get('browser')
+    if browser is None:
+        raise RuntimeError('Playwright browser is not initialized. Run suite hooks first.')
+    if context.get('shared_context') is None:
+        page_context = browser.new_context(
+            viewport={'width': 1920, 'height': 1080},
+            user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36',
+            extra_http_headers={
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1',
+                'Sec-Fetch-Dest': 'document',
+                'Sec-Fetch-Mode': 'navigate',
+                'Sec-Fetch-Site': 'none',
+                'Sec-Fetch-User': '?1',
+                'Cache-Control': 'max-age=0'
             }
-            driver.manage().window().setSize(new org.openqa.selenium.Dimension(1920, 1080));
-            driver.get("https://practicetestautomation.com/");
-            wait.until(ExpectedConditions.urlContains("practicetestautomation.com"));
-            Assert.assertTrue(driver.getCurrentUrl().contains("practicetestautomation.com"), "Expected URL to contain practicetestautomation.com");
-            WebElement element1 = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Blog")));
-            element1.click();
-            Assert.assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Blog"))).isDisplayed());
-            driver.get("https://practicetestautomation.com/blog/");
-            wait.until(ExpectedConditions.urlContains("/blog/"));
-            Assert.assertTrue(driver.getCurrentUrl().contains("/blog/"), "Expected URL to contain /blog/");
-            WebElement element2 = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Contact")));
-            element2.click();
-            Assert.assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Contact"))).isDisplayed());
-            driver.get("https://practicetestautomation.com/contact/");
-            wait.until(ExpectedConditions.urlContains("/contact/"));
-            Assert.assertTrue(driver.getCurrentUrl().contains("/contact/"), "Expected URL to contain /contact/");
-            WebElement element3 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("wpforms-161-field_0-last")));
-            element3.clear();
-            element3.sendKeys("heloo");
-            WebElement element4 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("wpforms-161-field_0")));
-            element4.clear();
-            element4.sendKeys("hi");
-            WebElement element5 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("wpforms-161-field_1")));
-            element5.clear();
-            element5.sendKeys("jjakakaa");
-            System.out.println("Test script 1 completed successfully!");
-        } catch (Exception e) {
-            System.err.println("Test script 1 failed: " + e.getMessage());
-            e.printStackTrace();
-            takeScreenshot();
-            Assert.fail("Test script 1 failed: " + e.getMessage());
-        }
-    }
+        )
+        page_context.set_default_timeout(60000)
+        page_context.set_default_navigation_timeout(60000)
+        context['shared_context'] = page_context
+    else:
+        page_context = context.get('shared_context')
 
-    @AfterSuite
-    public void suiteTearDown() {
-        try {
-            // Default teardown (screenshot + quit)
-            if (driver != null) {
-                try {
-                    TakesScreenshot screenshot = (TakesScreenshot) driver;
-                    byte[] screenshotBytes = screenshot.getScreenshotAs(OutputType.BYTES);
-                    String screenshotPath = "/tmp/screenshot_" + System.currentTimeMillis() + ".png";
-                    java.nio.file.Files.write(java.nio.file.Paths.get(screenshotPath), screenshotBytes);
-                    System.out.println("Screenshot saved: " + screenshotPath);
-                } catch (Exception e) {
-                    System.err.println("Failed to capture screenshot: " + e.getMessage());
-                }
-                driver.quit();
-            }
-        } catch (Exception e) {
-            System.err.println("Suite teardown failed: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+def module_teardown(context):
+    print("--- Module Teardown (Runs Once After All Tests) ---")
+    shared_context = context.get('shared_context')
+    if shared_context:
+        try:
+            shared_context.close()
+        except Exception:
+            pass
+        context['shared_context'] = None
 
-    public static void takeScreenshot() {
-        try {
-            if (driver instanceof TakesScreenshot) {
-                File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-                String timestamp = String.valueOf(System.currentTimeMillis());
-                String tempDir = System.getProperty("java.io.tmpdir");
-                File destFile = new File(tempDir, "selenium-screenshot-" + timestamp + ".png");
-                Files.copy(screenshot.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                System.err.println("Screenshot saved: " + destFile.getAbsolutePath());
-            }
-        } catch (IOException ex) {
-            System.err.println("Failed to capture screenshot: " + ex.getMessage());
-        }
-    }
-}
+def method_setup(context):
+    print("\n>>> Test Setup (Runs Before Each Test Script) <<<")
+    shared_context = context.get('shared_context')
+    if shared_context is None:
+        raise RuntimeError('Shared browser context is not initialized. Run module_setup first.')
+    page = shared_context.new_page()
+    page.set_default_timeout(60000)
+    page.set_default_navigation_timeout(60000)
+    page.add_init_script("""
+        Object.defineProperty(navigator, 'webdriver', {
+            get: () => undefined
+        });
+        window.navigator.chrome = {
+            runtime: {}
+        };
+        Object.defineProperty(navigator, 'plugins', {
+            get: () => [1, 2, 3, 4, 5]
+        });
+        Object.defineProperty(navigator, 'languages', {
+            get: () => ['en-US', 'en']
+        });
+    """)
+    context['page'] = page
+    try:
+        shared_context.clear_cookies()
+        pass
+    except Exception as hook_error:
+        try:
+            page.close()
+        except Exception:
+            pass
+        context['page'] = None
+        raise
+    return page
+
+def method_teardown(context):
+    page = context.get('page')
+    try:
+        pass
+    finally:
+        if page:
+            try:
+                page.close()
+            except Exception:
+                pass
+        context['page'] = None
+    print("<<< Test Teardown (Runs After Each Test Script) >>>")
+
+def test_ts0002(context):
+    page = method_setup(context)
+    try:
+        page.set_viewport_size({ 'width': 1920, 'height': 1080} )
+        page.evaluate('window.moveTo(0, 0); window.resizeTo(screen.width, screen.height);')
+        page.wait_for_timeout(1000)
+        page.goto("https://practicetestautomation.com/", timeout=30000, wait_until="domcontentloaded")
+        page.wait_for_load_state("load", timeout=30000)
+        page.wait_for_timeout(2000)
+        # Wait for element to be visible before clicking
+        page.locator("xpath=//a[@href='https://practicetestautomation.com/blog/' and normalize-space(.)='Blog']").wait_for(state="visible", timeout=30000)
+        page.locator("xpath=//a[@href='https://practicetestautomation.com/blog/' and normalize-space(.)='Blog']").click(timeout=30000)
+        page.wait_for_timeout(500)
+        page.goto("https://practicetestautomation.com/blog/", timeout=30000, wait_until="domcontentloaded")
+        page.wait_for_load_state("load", timeout=30000)
+        page.wait_for_timeout(2000)
+        # Wait for element to be visible before clicking
+        page.locator("xpath=//a[@href='https://practicetestautomation.com/contact/' and normalize-space(.)='Contact']").wait_for(state="visible", timeout=30000)
+        page.locator("xpath=//a[@href='https://practicetestautomation.com/contact/' and normalize-space(.)='Contact']").click(timeout=30000)
+        page.wait_for_timeout(500)
+        page.goto("https://practicetestautomation.com/contact/", timeout=30000, wait_until="domcontentloaded")
+        page.wait_for_load_state("load", timeout=30000)
+        page.wait_for_timeout(2000)
+        # Wait for element to be visible before typing
+        page.locator("xpath=//input[@id='wpforms-161-field_0-last']").wait_for(state="visible", timeout=30000)
+        page.locator("xpath=//input[@id='wpforms-161-field_0-last']").fill("heloo", timeout=30000)
+        page.wait_for_timeout(500)
+        # Wait for element to be visible before typing
+        page.locator("xpath=//input[@id='wpforms-161-field_0']").wait_for(state="visible", timeout=30000)
+        page.locator("xpath=//input[@id='wpforms-161-field_0']").fill("hi", timeout=30000)
+        page.wait_for_timeout(500)
+        # Wait for element to be visible before typing
+        page.locator("xpath=//input[@id='wpforms-161-field_1']").wait_for(state="visible", timeout=30000)
+        page.locator("xpath=//input[@id='wpforms-161-field_1']").fill("jjakakaa", timeout=30000)
+        page.wait_for_timeout(500)
+        print("[PASS] Test script 1 completed successfully!")
+    except Exception as e:
+        print(f"[FAIL] Test script 1 failed: {e}")
+        screenshot_path = os.path.join(tempfile.gettempdir(), f"playwright-screenshot-{int(time.time())}.png")
+        if page:
+            try:
+                page.screenshot(path=screenshot_path, full_page=True)
+                print(f"Screenshot saved: {screenshot_path}")
+            except Exception as screenshot_error:
+                print(f"Failed to capture screenshot: {screenshot_error}")
+        raise
+    finally:
+        method_teardown(context)
+
+def run_all_tests():
+    context = suite_setup()
+    try:
+        module_setup(context)
+        try:
+            tests = [
+                ("Test script 1 - TS0002", test_ts0002),
+            ]
+            for label, test_fn in tests:
+                try:
+                    test_fn(context)
+                except Exception as test_error:
+                    print(f"[ERROR] {label} raised an exception: {test_error}")
+                    continue
+        finally:
+            module_teardown(context)
+    finally:
+        suite_teardown(context)
+
+if __name__ == "__main__":
+    run_all_tests()
