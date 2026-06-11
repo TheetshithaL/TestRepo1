@@ -42,7 +42,7 @@ Suite Setup Keywords
         Call Method    ${options}    add_argument    --disable-extensions
         Call Method    ${options}    add_argument    --disable-web-security
         Call Method    ${options}    add_argument    --allow-running-insecure-content
-        Call Method    ${options}    add_argument    --user-data-dir\=/tmp/chrome_ca3c86a200a24bfba4f502c2b504409d
+        Call Method    ${options}    add_argument    --user-data-dir\=/tmp/chrome_ca04819c79c448ea8911ad836ac7171b
         Call Method    ${options}    add_argument    --remote-debugging-port\=0
         Call Method    ${options}    add_argument    --user-agent\=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36
         Log To Console    ${options.arguments}
@@ -76,33 +76,33 @@ TS0001
     Wait Until Location Contains    practicetestautomation.com    ${TIMEOUT}
     Wait Until Element Is Visible    ${ELEMENT_1}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_1}     ${TIMEOUT}
-    Click Element    ${ELEMENT_1}
-    Go To    ${PRACTICE_URL}
+    Click Element    ${ELEMENT_1} 
+    Go To    ${PRACTICE_URL} 
     Wait Until Location Contains    /practice/    ${TIMEOUT}
     Wait Until Element Is Visible    ${ELEMENT_2}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_2}     ${TIMEOUT}
-    Click Element    ${ELEMENT_2}
-    Go To    ${COURSES_URL}
+    Click Element    ${ELEMENT_2} 
+    Go To    ${COURSES_URL} 
     Wait Until Location Contains    /courses/    ${TIMEOUT}
     Wait Until Element Is Visible    ${ELEMENT_3}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_3}     ${TIMEOUT}
-    Click Element    ${ELEMENT_3}
-    Go To    ${BLOG_URL}
+    Click Element    ${ELEMENT_3} 
+    Go To    ${BLOG_URL} 
     Wait Until Location Contains    /blog/    ${TIMEOUT}
     Wait Until Element Is Visible    ${ELEMENT_4}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_4}     ${TIMEOUT}
-    Click Element    ${ELEMENT_4}
-    Go To    ${CONTACT_URL}
+    Click Element    ${ELEMENT_4} 
+    Go To    ${CONTACT_URL} 
     Wait Until Location Contains    /contact/    ${TIMEOUT}
     Wait Until Element Is Visible    ${ELEMENT_5}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_5}     ${TIMEOUT}
-    Input Text    ${ELEMENT_5}     ${VALUE_161_VALUE}
+    Input Text    ${ELEMENT_5}     ${VALUE_161_VALUE} 
     Wait Until Element Is Visible    ${ELEMENT_6}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_6}     ${TIMEOUT}
     Input Text    ${ELEMENT_6}     L
     Wait Until Element Is Visible    ${ELEMENT_7}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_7}     ${TIMEOUT}
-    Input Text    ${ELEMENT_7}     ${VALUE_161_VALUE}
+    Input Text    ${ELEMENT_7}     ${VALUE_161_VALUE} 
     Wait Until Element Is Visible    ${ELEMENT_8}     ${TIMEOUT}
     Wait Until Element Is Enabled    ${ELEMENT_8}     ${TIMEOUT}
-    Input Text    ${ELEMENT_8}     ${EMAIL}
+    Input Text    ${ELEMENT_8}     ${EMAIL} 
