@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation     TS0001 Automated Test Suite 1
+Documentation     TS0001 Automated Test Suite
 Library           SeleniumLibrary
 Library           BuiltIn
 
